@@ -221,7 +221,8 @@ function session(options) {
 
     // get the session ID from the cookie
     // var cookieId = req.sessionID = getcookie(req, name, secrets);
-    var cookieId = req.headers["x-session"];
+    var cookieId = (req.sessionID = req.headers["x-session"]);
+    var exCookieId = (req.sessionID = req.headers["x-session"]);
 
     // generate the session
     function generate() {
@@ -311,9 +312,10 @@ function session(options) {
         return false;
       }
 
-      return !saveUninitializedSession && cookieId !== req.sessionID
+      /*return !saveUninitializedSession && exCookieId !== req.sessionID
         ? isModified(req.session)
-        : !isSaved(req.session);
+        : !isSaved(req.session);*/
+      return true;
     }
 
     // determine if session should be touched
@@ -327,7 +329,8 @@ function session(options) {
         return false;
       }
 
-      return cookieId === req.sessionID && !shouldSave(req);
+      // return exCookieId === req.sessionID && !shouldSave(req);
+      return true;
     }
 
     // generate a session if the browser doesn't send a sessionID
@@ -388,11 +391,6 @@ function generateSessionId(sess) {
 function hash(sess) {
   // serialize
   var str = JSON.stringify(sess, function (key, val) {
-    // ignore sess.cookie property
-    if (this === sess && key === "cookie") {
-      return;
-    }
-
     return val;
   });
 
