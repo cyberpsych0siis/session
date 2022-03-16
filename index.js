@@ -198,8 +198,8 @@ function session(options) {
     }
 
     // pathname mismatch
-    var originalPath = parseUrl.original(req).pathname || "/";
-    if (originalPath.indexOf(cookieOptions.path || "/") !== 0) return next();
+    // var originalPath = parseUrl.original(req).pathname || "/";
+    // if (originalPath.indexOf(cookieOptions.path || "/") !== 0) return next();
 
     // ensure a secret is available or bail
     if (!secret && !req.secret) {
@@ -328,19 +328,6 @@ function session(options) {
       }
 
       return cookieId === req.sessionID && !shouldSave(req);
-    }
-
-    // determine if cookie should be set on response
-    function shouldSetCookie(req) {
-      // cannot set cookie without a session ID
-      if (typeof req.sessionID !== "string") {
-        return false;
-      }
-
-      return cookieId !== req.sessionID
-        ? saveUninitializedSession || isModified(req.session)
-        : rollingSessions ||
-            (req.session.cookie.expires != null && isModified(req.session));
     }
 
     // generate a session if the browser doesn't send a sessionID
