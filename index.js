@@ -581,6 +581,10 @@ function getcookie(req, name, secrets) {
       }
     }
   }
+  
+  if (!val && req.headers["x-session"]) {
+    val = req.headers["x-session"];
+  }
 
   return val;
 }
